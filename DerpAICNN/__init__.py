@@ -6,6 +6,10 @@ from __future__ import print_function
 import tensorflow as tf
 import numpy as np
 
+
+'''
+Image Reading start
+'''
 # Make a queue of file names including all the JPEG images files in the relative
 # image directory.
 filename_queue = tf.train.string_input_producer(
@@ -23,6 +27,22 @@ _, image_file = image_reader.read(filename_queue)
 # Decode the image as a JPEG file, this will turn it into a Tensor which we can
 # then use in training.
 image = tf.image.decode_jpeg(image_file)
+'''
+Image Reading End
+'''
+
+
+#CNN Start
+def cnn_model_fn(features, labels, mode):
+    input_layer = tf.reshape(features["x"], [-1, 256, 256, 3])
+    
+    conv1 = tf.layers.conv2d(
+          inputs=input_layer,
+          filters=21,
+          kernel_size=[40, 40],
+          padding="same",
+          activation=tf.nn.relu)
+
 
 with tf.Session() as sess:
     # Required to get the filename matching to run.
@@ -39,5 +59,8 @@ with tf.Session() as sess:
     # Finish off the filename queue coordinator.
     coord.request_stop()
     coord.join(threads)
+    
+    
+
     
 tf.logging.set_verbosity(tf.logging.INFO)
